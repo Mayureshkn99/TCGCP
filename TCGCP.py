@@ -95,6 +95,7 @@ class Game:
         self.TURN = (self.TURN+1)%4
 
 
-root = Tk()
-game = Game(root)
-root.mainloop()
+if __name__ == '__main__':
+    root = Tk()
+    game = Game(root)
+    root.mainloop()
