@@ -70,7 +70,9 @@ class Game:
 
 
     def player_loses(self, player):
-        pass
+        self.player_cards[player].extend(self.HISTORY)
+        self.HISTORY = []
+        self.score_label[player].config(text=f"{len(self.player_cards[player])} cards left")
 
         
     def reset_game(self):
