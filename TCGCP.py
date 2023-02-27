@@ -45,7 +45,7 @@ class Game:
         
     def start_game(self):
         self.GAME = True
-        self.HISTORY = []
+        self.DECK = []
         self.player_label = self.score_label = {}
 
         # Adding Player Labels and Cards Left
@@ -63,15 +63,17 @@ class Game:
         self.reset_button.grid(row=5, column=0, columnspan=2, padx=20, pady=10)
 
         self.current_card_image = Label(root, image=self.card_images["Cover"])
-        self.current_card_image.grid(row=0, column=3, rowspan=4, padx=20, pady=20)
+        self.current_card_image.grid(row=0, column=2, rowspan=3, padx=20, pady=20)
+        self.deck_label = Label(root, text="Deck: 0", font=("Helvetica", 24, "bold"), justify="center")
+        self.deck_label.grid(row=3, column=2, pady=20)
         
         # bind the function to the space bar event
         root.bind("<space>", self.next_card)
 
 
     def player_loses(self, player):
-        self.player_cards[player].extend(self.HISTORY)
-        self.HISTORY = []
+        self.player_cards[player].extend(self.DECK)
+        self.DECK = []
         self.score_label[player].config(text=f"{len(self.player_cards[player])} cards left")
 
         
@@ -82,14 +84,19 @@ class Game:
     def next_card(self, event):
         if self.GAME == False:
             return
+        if len(self.player_cards[self.TURN]) == 0:
+            # Updating the turn
+            self.TURN = (self.TURN+1)%4
+            return
         current_card = self.player_cards[self.TURN].pop(0)
         
         # Updating the Score
         self.score_label[self.TURN].config(text=f"{len(self.player_cards[self.TURN])} cards left")
 
-        # Updating the card image
+        # Updating the Deck
         self.current_card_image.config(image=self.card_images[current_card])
-        self.HISTORY.append(current_card)
+        self.DECK.append(current_card)
+        self.deck_label.config(text=f"Deck: {len(self.DECK)}")
 
         # Updating the turn
         self.TURN = (self.TURN+1)%4
