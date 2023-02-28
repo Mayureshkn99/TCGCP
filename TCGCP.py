@@ -80,6 +80,9 @@ class Game:
         self.DECK = []
         self.deck_label.config(text=f"Deck: 0")
         self.score_label[player].config(text=f"{len(self.player_cards[player])} cards left")
+        self.player_label[self.TURN].config(fg='SystemButtonText')
+        self.TURN = (player+1)%4
+        self.player_label[self.TURN].config(fg='red')
 
         
     def reset_game(self):
