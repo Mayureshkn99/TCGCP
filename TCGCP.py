@@ -46,7 +46,8 @@ class Game:
     def start_game(self):
         self.GAME = True
         self.DECK = []
-        self.player_label = self.score_label = {}
+        self.player_label = {}
+        self.score_label = {}
 
         # Adding player labels and cards left
         for i in range(4):
@@ -56,6 +57,9 @@ class Game:
             self.player_label[i].grid(row=i, column=0, pady=20)
             self.score_label[i] = Label(root, text="16 cards left", font=("Helvetica", 24, "bold"))
             self.score_label[i].grid(row=i, column=1, pady=20)
+        
+        # Indicating Turn
+        self.player_label[self.TURN].config(fg='red')
         
         # Replace start with reset button
         self.start_button.grid_forget()
@@ -89,9 +93,12 @@ class Game:
     def next_card(self, event):
         if self.GAME == False:
             return
+        prev = self.TURN
         if len(self.player_cards[self.TURN]) == 0:
             # Updating the turn
             self.TURN = (self.TURN+1)%4
+            self.player_label[prev].config(fg='SystemButtonText')
+            self.player_label[self.TURN].config(fg='red')
             return
         current_card = self.player_cards[self.TURN].pop(0)
         
@@ -105,6 +112,8 @@ class Game:
 
         # Updating the turn
         self.TURN = (self.TURN+1)%4
+        self.player_label[prev].config(fg='SystemButtonText')
+        self.player_label[self.TURN].config(fg='red')
 
 
 if __name__ == '__main__':
