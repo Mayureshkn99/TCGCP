@@ -24,16 +24,10 @@ class Game:
 
         # Displaying player entrys
         self.player_names = {}
-        self.entry = {}
-        for i in range(4):
-            self.player_names[i] = StringVar()
-            self.player_names[i].set(f"Player {i+1}")
-            self.entry[i] = Entry(root, textvariable=self.player_names[i], font=("Helvetica", 24, "bold"))
-            self.entry[i].grid(row=i, column=0, pady=20)
+        self.player_details_frame = Frame(master=self.root)
+        self.set_pd_frame()
+        self.player_details_frame.pack()
 
-        # Adding start button
-        self.start_button = Button(root, text="Start", font=("Helvetica", 16), command=self.start_game)
-        self.start_button.grid(row=5, column=0, padx=20, pady=10)
         self.GAME = False
         self.TURN = 0
 
@@ -43,10 +37,10 @@ class Game:
         self.player_label = {}
         self.score_label = {}
 
+        self.player_details_frame.pack_forget()
         # Adding player labels and cards left
         for i in range(4):
-            name = self.entry[i].get()+": "
-            self.entry[i].grid_forget()
+            name = self.player_names[i].get()+": "
             self.player_label[i] = Button(root, text=name, font=("Helvetica", 24, "bold"), command=lambda i=i :self.player_loses(i))
             self.player_label[i].grid(row=i, column=0, pady=20)
             self.score_label[i] = Label(root, text=f"{len(self.player_cards[i])} cards left", font=("Helvetica", 24, "bold"))
@@ -84,6 +78,18 @@ class Game:
         for i in range(self.players):
             self.player_cards[i] = self.cards[no_of_cards * i:no_of_cards * (i+1)]
 
+    def set_pd_frame(self):
+        '''Initialises frame with the player details screen'''
+        entry = {}
+        for i in range(self.players):
+            self.player_names[i] = StringVar()
+            self.player_names[i].set(f"Player {i+1}")
+            entry[i] = Entry(self.player_details_frame, textvariable=self.player_names[i], font=("Helvetica", 24, "bold"))
+            entry[i].pack(pady=20)
+
+        # Adding start button
+        self.start_button = Button(self.player_details_frame, text="Start", font=("Helvetica", 16), command=self.start_game)
+        self.start_button.pack(pady=10)
 
     def player_loses(self, player):
         self.player_cards[player].extend(self.DECK)
