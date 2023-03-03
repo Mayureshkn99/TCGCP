@@ -23,10 +23,10 @@ class Game:
             image = Image.open(f"images/{card.lower()}.jpg")
             self.card_images[card] = ImageTk.PhotoImage(image)
 
+        self.players = 4
         # Distributing cards among players
         self.player_cards = {}
-        for i in range(4):
-            self.player_cards[i] = self.cards[16*i:16*(i+1)]
+        self.deal_cards()
 
         # Displaying player entrys
         self.player_names = {}
@@ -55,7 +55,7 @@ class Game:
             self.entry[i].grid_forget()
             self.player_label[i] = Button(root, text=name, font=("Helvetica", 24, "bold"), command=lambda i=i :self.player_loses(i))
             self.player_label[i].grid(row=i, column=0, pady=20)
-            self.score_label[i] = Label(root, text="16 cards left", font=("Helvetica", 24, "bold"))
+            self.score_label[i] = Label(root, text=f"{len(self.player_cards[i])} cards left", font=("Helvetica", 24, "bold"))
             self.score_label[i].grid(row=i, column=1, pady=20)
         
         # Indicating Turn
@@ -73,6 +73,13 @@ class Game:
         
         # Bind the function to the space bar event
         root.bind("<space>", self.next_card)
+
+    def deal_cards(self):
+        '''Deal cards to players'''
+        no_of_cards = len(self.cards) // self.players if (self.players >= 5) else 12
+        random.shuffle(self.cards)
+        for i in range(self.players):
+            self.player_cards[i] = self.cards[no_of_cards * i:no_of_cards * (i+1)]
 
 
     def player_loses(self, player):
