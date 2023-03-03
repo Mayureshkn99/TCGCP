@@ -12,16 +12,10 @@ class Game:
         # Initializing cards
         self.cards = ["Taco", "Cat", "Goat", "Cheese", "Pizza"]*11
         self.cards.extend(["Narwhal", "Gorilla", "Groundhog"]*3)
-        random.shuffle(self.cards)
 
         # Loading card images
         self.card_images = {}
-        image = Image.open(f"images/cover.jpg")
-        image = image.resize((500, 281))
-        self.card_images["Cover"] = ImageTk.PhotoImage(image)
-        for card in set(self.cards):
-            image = Image.open(f"images/{card.lower()}.jpg")
-            self.card_images[card] = ImageTk.PhotoImage(image)
+        self.load_images()
 
         self.players = 4
         # Distributing cards among players
@@ -42,7 +36,7 @@ class Game:
         self.start_button.grid(row=5, column=0, padx=20, pady=10)
         self.GAME = False
         self.TURN = 0
-        
+
     def start_game(self):
         self.GAME = True
         self.DECK = []
@@ -73,6 +67,15 @@ class Game:
         
         # Bind the function to the space bar event
         root.bind("<space>", self.next_card)
+
+    def load_images(self):
+        '''Load images for cards'''
+        image = Image.open(f"images/cover.jpg")
+        image = image.resize((500, 281))
+        self.card_images["Cover"] = ImageTk.PhotoImage(image)
+        for card in set(self.cards):
+            image = Image.open(f"images/{card.lower()}.jpg")
+            self.card_images[card] = ImageTk.PhotoImage(image)
 
     def deal_cards(self):
         '''Deal cards to players'''
