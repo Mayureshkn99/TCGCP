@@ -14,28 +14,28 @@ class Game:
         self.cards = ["Taco", "Cat", "Goat", "Cheese", "Pizza"]*11
         self.cards.extend(["Narwhal", "Gorilla", "Groundhog"]*3)
 
-        self.num_players = 4
-
         # Loading card images
         self.card_images = {}
         self.load_images()
 
         # Distributing cards among players
         self.player_cards = {}
-        self.deal_cards()
-
-        self.player_names = {}
 
         self.DECK = []
+        self.player_names = {}
+        self.win_button = {}
         self.player_button = {}
         self.score_label = {}
         self.current_card_image = None
         self.deck_label = None
 
         # Creating frames for different screens
+        self.num_players_frame = None
+        self.players_entry_frame = None
+        self.game_frame = None
+
+        # Getting player details
         self.set_player_details()
-        self.set_game_frame()
-        self.player_details_frame.pack()
 
         self.GAME = False
         self.TURN = 0
@@ -60,7 +60,7 @@ class Game:
         """Add player Entries"""
 
         # Getting number of players
-        n = int(self.num_players.get())
+        self.players = int(self.num_players.get())
 
         # Destroying existing frame
         if self.players_entry_frame:
@@ -68,10 +68,9 @@ class Game:
 
         # Generating player entries
         self.players_entry_frame = Frame(master=self.root)
-        self.players_entry_frame.pack_forget()
-        self.player_name_label = Label(self.players_entry_frame, text=f"Enter the name of {n} players:", font=("Helvetica", 15, "bold"))
+        self.player_name_label = Label(self.players_entry_frame, text=f"Enter the name of {self.players} players:", font=("Helvetica", 15, "bold"))
         self.player_name_label.pack()
-        for i in range(n):
+        for i in range(self.players):
             self.player_names[i] = StringVar()
             self.player_names[i].set(f"Player {i+1}")
             player_entry = Entry(self.players_entry_frame, textvariable=self.player_names[i], font=("Helvetica", 15, "bold"))
@@ -83,29 +82,15 @@ class Game:
     def start_game(self):
         """Initialising the game layout"""
         self.GAME = True
-        self.win_button = {}
+
+        self.deal_cards()
 
         self.num_players_frame.pack_forget()
         self.players_entry_frame.pack_forget()
-        # Adding player labels and cards left
-        for i in range(4):
-            name = self.player_names[i].get()+": "
-            self.player_button[i] = Button(root, text=name, font=("Helvetica", 24, "bold"), command=lambda i=i :self.player_loses(i))
-            self.player_button[i].grid(row=i, column=0, pady=20)
-            self.score_label[i] = Label(root, text=f"{len(self.player_cards[i])} cards left", font=("Helvetica", 24, "bold"))
-            self.score_label[i].grid(row=i, column=1, pady=20)
+        self.set_game_frame()
         
         # Indicating Turn
         self.player_button[self.TURN].config(fg='red')
-        
-        # Replace start with reset button
-        self.reset_button = Button(root, text="Reset", font=("Helvetica", 16), command=self.reset_game)
-        self.reset_button.grid(row=5, column=0, columnspan=4, pady=10)
-
-        self.current_card_image = Label(root, image=self.card_images["Cover"])
-        self.current_card_image.grid(row=0, column=2, rowspan=3, padx=20, pady=20)
-        self.deck_label = Label(root, text="Deck: 0", font=("Helvetica", 24, "bold"), justify="center")
-        self.deck_label.grid(row=3, column=2, pady=20)
         
         # Bind the function to the space bar event
         root.bind("<space>", self.next_card)
@@ -121,27 +106,30 @@ class Game:
 
     def deal_cards(self):
         """Deal cards to players"""
-        cards_per_player = len(self.cards) // self.num_players if (self.num_players >= 5) else 12
+        cards_per_player = len(self.cards) // self.players if (self.players >= 5) else 12
         shuffle(self.cards)
-        for i in range(self.num_players):
+        for i in range(self.players):
             self.player_cards[i] = self.cards[cards_per_player * i:cards_per_player * (i+1)]
 
     def set_game_frame(self):
         '''Initialises frame with game details and controls'''
         # Adding player labels and cards left
+        self.game_frame = Frame(master=self.root)
         game = Frame(self.game_frame)
-
-        players = Frame(game)
+        players_frame = Frame(game)
+        
         player_frames = {}
         for i in range(self.players):
-            player_frames[i] = Frame(players)
+            player_frames[i] = Frame(players_frame)
             name = self.player_names[i].get() + ": "
+            self.win_button[i] = Button(player_frames[i], text="WIN", state="disabled", font=("Helvetica", 15, "bold"), command=lambda i=i :self.player_wins(i))
+            self.win_button[i].grid(row=0, column=0, padx=10, pady=10)
             self.player_button[i] = Button(player_frames[i], text=name, font=("Helvetica", 24, "bold"), command=lambda i=i:self.player_loses(i))
-            self.player_button[i].grid(row=0, column=0)
+            self.player_button[i].grid(row=0, column=1)
             self.score_label[i] = Label(player_frames[i], text=f"{len(self.player_cards[i])} cards left", font=("Helvetica", 24, "bold"))
-            self.score_label[i].grid(row=0, column=1)
+            self.score_label[i].grid(row=0, column=2)
             player_frames[i].pack(pady=20)
-        players.pack(side="left")
+        players_frame.pack(side="left")
 
         deck = Frame(game)
         self.current_card_image = Label(deck, image=self.card_images["Cover"])
@@ -154,35 +142,7 @@ class Game:
         
         self.reset_button = Button(self.game_frame, text="Reset", font=("Helvetica", 16), command=self.reset_game)
         self.reset_button.pack(side="bottom", padx=20, pady=10)
-
-    def set_game_frame(self):
-        '''Initialises frame with game details and controls'''
-        # Adding player labels and cards left
-        game = Frame(self.game_frame)
-
-        players = Frame(game)
-        player_frames = {}
-        for i in range(self.players):
-            player_frames[i] = Frame(players)
-            name = self.player_names[i].get() + ": "
-            self.player_button[i] = Button(player_frames[i], text=name, font=("Helvetica", 24, "bold"), command=lambda i=i:self.player_loses(i))
-            self.player_button[i].grid(row=0, column=0)
-            self.score_label[i] = Label(player_frames[i], text=f"{len(self.player_cards[i])} cards left", font=("Helvetica", 24, "bold"))
-            self.score_label[i].grid(row=0, column=1)
-            player_frames[i].pack(pady=20)
-        players.pack(side="left")
-
-        deck = Frame(game)
-        self.current_card_image = Label(deck, image=self.card_images["Cover"])
-        self.current_card_image.pack(padx=20, pady=20)
-        self.deck_label = Label(deck, text="Deck: 0", font=("Helvetica", 24, "bold"), justify="center")
-        self.deck_label.pack(side="bottom", pady=20)
-        deck.pack(side="left")
-
-        game.pack()
-        
-        self.reset_button = Button(self.game_frame, text="Reset", font=("Helvetica", 16), command=self.reset_game)
-        self.reset_button.pack(side="bottom", padx=20, pady=10)
+        self.game_frame.pack()
 
     def player_loses(self, player):
         """When a player loses a round"""
@@ -212,7 +172,6 @@ class Game:
     def player_wins(self, player):
         """When a player wins the game"""
         print(player)
-        pass
 
     def reset_game(self):
         """Resets the game and takes the user back to the entry screen"""
