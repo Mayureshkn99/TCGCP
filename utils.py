@@ -1,8 +1,8 @@
 class PlayerIterator:
     '''Creates iterator to cycle through active players'''
 
-    def __init__(self, active_players):
-        self.active_players = active_players
+    def __init__(self, players):
+        self.active_players = list(range(players))
 
     def __iter__(self):
         self.pos = 0
@@ -16,3 +16,6 @@ class PlayerIterator:
     
     def set_loser(self, loser):
         self.pos = self.active_players.index(loser)
+
+    def player_wins(self, winner):
+        self.active_players.remove(winner)

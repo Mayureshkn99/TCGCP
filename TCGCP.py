@@ -29,7 +29,6 @@ class Game:
         self.score_label = {}
         self.current_card_image = None
         self.deck_label = None
-        self.active = []
 
         # Creating frames for different screens
         self.num_players_frame = None
@@ -132,8 +131,7 @@ class Game:
             self.score_label[i] = Label(player_frames[i], text=f"{len(self.player_cards[i])} cards left", font=("Helvetica", 24, "bold"))
             self.score_label[i].grid(row=0, column=2)
             player_frames[i].pack(pady=20)
-            self.active.append(i)
-        self.pool_obj = PlayerIterator(self.active)
+        self.pool_obj = PlayerIterator(self.players)
         self.pool = iter(self.pool_obj)
         players_frame.pack(side="left")
 
@@ -182,7 +180,7 @@ class Game:
 
     def player_wins(self, player):
         """When a player wins the game"""
-        print(player)
+        self.pool_obj.player_wins(player)
 
     def reset_game(self):
         """Resets the game and takes the user back to the entry screen"""
