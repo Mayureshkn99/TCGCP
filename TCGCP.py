@@ -116,6 +116,7 @@ class Game:
         # Adding player labels and cards left
         self.game_frame = Frame(master=self.root)
         game = Frame(self.game_frame)
+        buttons = Frame(self.game_frame)
         players_frame = Frame(game)
         
         player_frames = {}
@@ -140,8 +141,12 @@ class Game:
 
         game.pack()
         
-        self.reset_button = Button(self.game_frame, text="Reset", font=("Helvetica", 16), command=self.reset_game)
-        self.reset_button.pack(side="bottom", padx=20, pady=10)
+        self.reset_button = Button(buttons, text="Reset", font=("Helvetica", 16), command=self.reset_game)
+        self.reset_button.pack(side="left", padx=50, pady=10)
+        self.play_again_button = Button(buttons, text="Play Again", font=("Helvetica", 16), command=self.play_again)
+        self.play_again_button.pack(side="left", padx=50, pady=10)
+        buttons.pack()
+
         self.game_frame.pack()
 
     def player_loses(self, player):
@@ -179,7 +184,30 @@ class Game:
         for widget in self.root.winfo_children():
             widget.destroy()
         self.__init__(self.root)
-        
+    
+    def play_again(self):
+        """Restart the game with the existing players"""
+
+        # Dealing cards
+        self.deal_cards()
+
+        # Disabling win button and updating number of cards
+        for i in range(self.players):
+            self.win_button[i].config(state="disabled")
+            self.score_label[i].config(text=f"{len(self.player_cards[self.TURN])} cards left")
+
+        # Updating deck
+        self.DECK = []
+        self.deck_label.config(text=f"Deck: 0")
+
+        # Updating turn
+        self.player_button[self.TURN].config(fg='SystemButtonText')
+        self.TURN = 0
+        self.player_button[self.TURN].config(fg='red')
+
+        # update card image
+        self.current_card_image.config(image=self.card_images["Cover"])
+
     def next_card(self, event):
         """Changing the turn and updating the next card"""
         if self.GAME == False:
