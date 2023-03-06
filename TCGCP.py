@@ -212,7 +212,6 @@ class Game:
         """Changing the turn and updating the next card"""
         if self.GAME == False:
             return
-        prev = self.TURN
 
         if len(self.player_cards[self.TURN]) != 0:
 
@@ -232,8 +231,8 @@ class Game:
             self.deck_label.config(text=f"Deck: {len(self.DECK)}")
 
         # Updating the turn
+        self.player_button[self.TURN].config(fg='SystemButtonText')
         self.TURN = (self.TURN+1)%self.players
-        self.player_button[prev].config(fg='SystemButtonText')
         self.player_button[self.TURN].config(fg='red')
 
 
