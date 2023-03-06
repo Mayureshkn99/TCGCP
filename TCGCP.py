@@ -171,7 +171,7 @@ class Game:
         self.player_button[self.TURN].config(fg='SystemButtonText')
 
         # Updating the turn
-        self.TURN = (player+1)%4
+        self.TURN = (player+1)%self.players
         self.player_button[self.TURN].config(fg='red')
 
     def player_wins(self, player):
@@ -232,7 +232,7 @@ class Game:
             self.deck_label.config(text=f"Deck: {len(self.DECK)}")
 
         # Updating the turn
-        self.TURN = (self.TURN+1)%4
+        self.TURN = (self.TURN+1)%self.players
         self.player_button[prev].config(fg='SystemButtonText')
         self.player_button[self.TURN].config(fg='red')
 
