@@ -1,6 +1,7 @@
 from tkinter import Tk, Frame, Button, Label, Entry, StringVar
 from PIL import ImageTk, Image
 from random import shuffle
+from utils import PlayerIterator
 
 class Game:
 
@@ -28,6 +29,7 @@ class Game:
         self.score_label = {}
         self.current_card_image = None
         self.deck_label = None
+        self.active = []
 
         # Creating frames for different screens
         self.num_players_frame = None
@@ -130,6 +132,9 @@ class Game:
             self.score_label[i] = Label(player_frames[i], text=f"{len(self.player_cards[i])} cards left", font=("Helvetica", 24, "bold"))
             self.score_label[i].grid(row=0, column=2)
             player_frames[i].pack(pady=20)
+            self.active.append(i)
+        self.pool_obj = PlayerIterator(self.active)
+        self.pool = iter(self.pool_obj)
         players_frame.pack(side="left")
 
         deck = Frame(game)
@@ -171,7 +176,8 @@ class Game:
         self.player_button[self.TURN].config(fg='SystemButtonText')
 
         # Updating the turn
-        self.TURN = (player+1)%self.players
+        self.pool_obj.set_loser(player)
+        self.TURN = next(self.pool)
         self.player_button[self.TURN].config(fg='red')
 
     def player_wins(self, player):
@@ -232,7 +238,7 @@ class Game:
 
         # Updating the turn
         self.player_button[self.TURN].config(fg='SystemButtonText')
-        self.TURN = (self.TURN+1)%self.players
+        self.TURN = next(self.pool)
         self.player_button[self.TURN].config(fg='red')
 
 
