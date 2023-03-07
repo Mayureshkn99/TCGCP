@@ -178,9 +178,15 @@ class Game:
         self.player_button[self.TURN].config(fg='red')
 
     def player_wins(self, player):
-        """When a player wins the game"""        
-        self.pool.player_wins(player)
+        """When a player wins the game"""    
 
+        # Updating the turn    
+        if self.TURN == player:
+            self.TURN = self.pool.next()
+        self.player_button[self.TURN].config(fg='red')
+        
+        self.pool.player_wins(player)
+        
         # Disabling Buttons and Label
         self.win_button[player].config(state="disabled")
         self.player_button[player].config(state="disabled")
