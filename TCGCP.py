@@ -131,8 +131,7 @@ class Game:
             self.score_label[i] = Label(player_frames[i], text=f"{len(self.player_cards[i])} cards left", font=("Helvetica", 24, "bold"))
             self.score_label[i].grid(row=0, column=2)
             player_frames[i].pack(pady=20)
-        self.pool_obj = PlayerIterator(self.players)
-        self.pool = iter(self.pool_obj)
+        self.pool = PlayerIterator(self.players)
         players_frame.pack(side="left")
 
         deck = Frame(game)
@@ -174,13 +173,18 @@ class Game:
         self.player_button[self.TURN].config(fg='SystemButtonText')
 
         # Updating the turn
-        self.pool_obj.set_loser(player)
-        self.TURN = next(self.pool)
+        self.pool.set_loser(player)
+        self.TURN = self.pool.next()
         self.player_button[self.TURN].config(fg='red')
 
     def player_wins(self, player):
-        """When a player wins the game"""
-        self.pool_obj.player_wins(player)
+        """When a player wins the game"""        
+        self.pool.player_wins(player)
+
+        # Disabling Buttons and Label
+        self.win_button[player].config(state="disabled")
+        self.player_button[player].config(state="disabled")
+
 
     def reset_game(self):
         """Resets the game and takes the user back to the entry screen"""
@@ -198,18 +202,21 @@ class Game:
         # Disabling win button and updating number of cards
         for i in range(self.players):
             self.win_button[i].config(state="disabled")
+            self.player_button[i].config(state="active", fg='SystemButtonText')
             self.score_label[i].config(text=f"{len(self.player_cards[self.TURN])} cards left")
 
         # Updating deck
         self.DECK = []
         self.deck_label.config(text=f"Deck: 0")
-
+        
+        #Updating players
+        self.pool = PlayerIterator(self.players)
+        
         # Updating turn
-        self.player_button[self.TURN].config(fg='SystemButtonText')
         self.TURN = 0
         self.player_button[self.TURN].config(fg='red')
 
-        # update card image
+        # Updating card image
         self.current_card_image.config(image=self.card_images["Cover"])
 
     def next_card(self, event):
@@ -236,7 +243,7 @@ class Game:
 
         # Updating the turn
         self.player_button[self.TURN].config(fg='SystemButtonText')
-        self.TURN = next(self.pool)
+        self.TURN = self.pool.next()
         self.player_button[self.TURN].config(fg='red')
 
 

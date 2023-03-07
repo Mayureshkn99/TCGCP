@@ -3,12 +3,9 @@ class PlayerIterator:
 
     def __init__(self, players):
         self.active_players = list(range(players))
-
-    def __iter__(self):
         self.pos = 0
-        return self
     
-    def __next__(self):
+    def next(self):
         self.pos += 1
         if self.pos == len(self.active_players):
             self.pos = 0
@@ -18,4 +15,6 @@ class PlayerIterator:
         self.pos = self.active_players.index(loser)
 
     def player_wins(self, winner):
+        if winner < self.active_players[self.pos]:
+            self.pos-=1
         self.active_players.remove(winner)
