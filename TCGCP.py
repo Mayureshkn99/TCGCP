@@ -202,7 +202,7 @@ class Game:
         # Disabling win button and updating number of cards
         for i in range(self.players):
             self.win_button[i].config(state="disabled")
-            self.player_button[i].config(state="active", fg='SystemButtonText')
+            self.player_button[i].config(state="normal", fg='SystemButtonText')
             self.score_label[i].config(text=f"{len(self.player_cards[self.TURN])} cards left")
 
         # Updating deck
@@ -231,7 +231,7 @@ class Game:
 
             # Activate win Button if player has 0 cards left
             if len(self.player_cards[self.TURN]) == 0 and self.win_button[self.TURN].cget("state") == "disabled":
-                self.win_button[self.TURN].config(state="active")
+                self.win_button[self.TURN].config(state="normal")
             
             # Updating the score
             self.score_label[self.TURN].config(text=f"{len(self.player_cards[self.TURN])} cards left")
