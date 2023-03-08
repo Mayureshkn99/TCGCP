@@ -1,5 +1,1 @@
-game-env/*
-future_scope.txt
-TCGCP.ipynb
-test.py
-__pycache__/utils.cpython-311.pyc
+__pycache__/*
