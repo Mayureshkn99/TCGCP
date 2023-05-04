@@ -1,3 +1,5 @@
+import sys
+import os
 from tkinter import Tk, Frame, Button, Label, Entry, StringVar
 from PIL import ImageTk, Image
 from random import shuffle
@@ -95,14 +97,24 @@ class Game:
         
         # Bind the function to the space bar event
         root.bind("<space>", self.next_card)
+    
+    def resource_path(self, relative_path):
+        """ Get absolute path to resource, works for dev and for PyInstaller """
+        try:
+            # PyInstaller creates a temp folder and stores path in _MEIPASS
+            base_path = sys._MEIPASS
+        except Exception:
+            base_path = os.path.abspath(".")
+
+        return os.path.join(base_path, relative_path)
 
     def load_images(self):
         """Load images for cards"""
-        image = Image.open(f"images/cover.png")
+        image = Image.open(self.resource_path(f"images/cover.png"))
         image = image.resize((500, 281))
         self.card_images["Cover"] = ImageTk.PhotoImage(image)
         for card in set(self.cards):
-            image = Image.open(f"images/{card.lower()}.png")
+            image = Image.open(self.resource_path(f"images/{card.lower()}.png"))
             self.card_images[card] = ImageTk.PhotoImage(image)
 
     def deal_cards(self):
